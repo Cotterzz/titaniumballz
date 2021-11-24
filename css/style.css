@@ -1,0 +1,17 @@
+div {
+   margin: 0px;
+    padding: 0px;
+}
+
+body {
+    background-color: #000;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+
+canvas {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+}
