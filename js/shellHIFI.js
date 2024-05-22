@@ -94,18 +94,50 @@ var physics = {
             controls.objects[A].position.y -= sind;
             controls.objects[B].position.x += cosd;
             controls.objects[B].position.y += sind;
-            synth.playSound(4+Math.random()*13);
         }
     },
-    score: function() {
+    score: function(side) {
         controls.objects[0].position.x = 0;
         controls.objects[0].position.y = 0;
+        if(side=="A"){
+            lights.light1.color.setHex( 0x3333ff );
+            lights.light1.intensity = 10;
+
+            //console.log(field.borderMeshLeft);
+            var newMat = field.borderMeshRight.material;
+            newMat.color.set(0xeeeeff);
+            //field.borderMeshLeft.material = newMat;
+        } else {
+            lights.light2.color.setHex( 0x3333ff );
+            lights.light2.intensity = 10;
+            //console.log(field.borderMeshRight);
+            var newMat = field.borderMeshLeft.material;
+            newMat.color.set(0xeeeeff);
+            //field.borderMeshRight.material = newMat;
+        }
         this.xv[0] = 0;
         this.yv[0] = 0;
         this.poss = false;
         this.possby = 0;
     },
     animate: function() {
+
+        if(lights.light1.intensity>3){
+            lights.light1.intensity-=1
+        } else if (lights.light1.intensity==3){
+            lights.light1.intensity=2;
+            lights.light1.color.setHex( 0xFF0B00 );
+            var newMat = field.borderMeshRight.material;
+            newMat.color.set(0xcc3333);
+        }
+        if(lights.light2.intensity>3){
+            lights.light2.intensity-=1
+        } else if (lights.light2.intensity==3){
+            lights.light2.intensity=2;
+            lights.light2.color.setHex( 0x00FF24 );
+            var newMat = field.borderMeshLeft.material;
+            newMat.color.set(0x33cc33);
+        }
 
         for (var i = 0; i < this.amount; i++) {
 
@@ -128,7 +160,7 @@ var physics = {
 
                     if (i === 0) {
                         if (controls.objects[i].position.y < this.goalTop && controls.objects[i].position.y > this.goalBottom) {
-                            this.score();
+                            this.score("A");
                         }
                     }
                     if(i==0){
@@ -141,7 +173,7 @@ var physics = {
                     this.xv[i] = -this.xv[i];
                     if (i === 0) {
                         if (controls.objects[i].position.y < this.goalTop && controls.objects[i].position.y > this.goalBottom) {
-                            this.score();
+                            this.score("B");
                         }
                     }
                     if(i==0){
@@ -277,9 +309,7 @@ var physics = {
                     if (Math.sqrt((Math.abs(xd) * Math.abs(xd) + (Math.abs(yd) * Math.abs(yd)))) < 0.2) {
                         this.poss = true;
                         this.possby = i;
-                       synth .stopOsc(0);
-
-                    	synth.startOsc(0, 4+i);
+                      
                     }
                 }
 
@@ -648,6 +678,8 @@ var lights = {
         this.light2 = new THREE.PointLight(colours.lightTeamA, 2, 20, 2);
         this.light2.position.set(-13, 0, 2);
 
+        
+
         //this.light2 = new THREE.RectAreaLight( 0xFFFFFF, 2,  2, 3 );
         //this.light2.position.set( -7, 0, 1 );
         //this.light2.lookAt( 0, 0, 1 );
@@ -813,21 +845,21 @@ var field = {
             color: 0x33cc33
         });
         borderGeomLeft = new THREE.PlaneBufferGeometry(5.4, 2, 64, 8);
-        borderMeshLeft = new THREE.Mesh(borderGeomLeft, borderMtrlLeft);
-        borderMeshLeft.position.set(-9.65, 0, 1);
-        borderMeshLeft.rotation.x = -1.5708;
-        borderMeshLeft.rotation.y = 1.5708;
-        viewport.scene.add(borderMeshLeft);
+        this.borderMeshLeft = new THREE.Mesh(borderGeomLeft, borderMtrlLeft);
+        this.borderMeshLeft.position.set(-9.65, 0, 1);
+        this.borderMeshLeft.rotation.x = -1.5708;
+        this.borderMeshLeft.rotation.y = 1.5708;
+        viewport.scene.add(this.borderMeshLeft);
 
         borderMtrlRight = new THREE.MeshBasicMaterial({
             color: 0xcc3333
         });
         borderGeomRight = new THREE.PlaneBufferGeometry(5.4, 2, 64, 8);
-        borderMeshRight = new THREE.Mesh(borderGeomRight, borderMtrlRight);
-        borderMeshRight.position.set(9.65, 0, 1);
-        borderMeshRight.rotation.x = 1.5708;
-        borderMeshRight.rotation.y = -1.5708;
-        viewport.scene.add(borderMeshRight);
+        this.borderMeshRight = new THREE.Mesh(borderGeomRight, borderMtrlRight);
+        this.borderMeshRight.position.set(9.65, 0, 1);
+        this.borderMeshRight.rotation.x = 1.5708;
+        this.borderMeshRight.rotation.y = -1.5708;
+        viewport.scene.add(this.borderMeshRight);
 
         goalShapeLeft = new THREE.Shape();
         goalShapeLeft.moveTo(-5.4, -1.5);
@@ -886,7 +918,7 @@ var ball = {
     geometry: null,
     material: null,
     init: function() {
-    	synth.startOsc(0, 11);
+    
         log.out("init ball");
         this.geometry = new THREE.SphereGeometry(0.2, 16, 16);
         this.material = new THREE.MeshBasicMaterial({
@@ -1170,7 +1202,7 @@ var log = {
     }
 };
 log.init();
-var synth = new Synthesizer();
+
 viewport.init();
 
 controls.init();
