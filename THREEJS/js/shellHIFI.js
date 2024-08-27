@@ -164,9 +164,9 @@ var physics = {
                         }
                     }
                     if(i==0){
-                    	//synth.stopOsc(0);
-                    	//synth.startOsc(0, 4);
-                	}
+                        //synth.stopOsc(0);
+                        //synth.startOsc(0, 4);
+                    }
                 }
                 if (controls.objects[i].position.x < this.leflim[i]) {
                     controls.objects[i].position.x = this.leflim[i];
@@ -177,9 +177,9 @@ var physics = {
                         }
                     }
                     if(i==0){
-                    	//synth.stopOsc(0);
-                    	//synth.startOsc(0, 3);
-                	}
+                        //synth.stopOsc(0);
+                        //synth.startOsc(0, 3);
+                    }
                    // synth.playSound(13);
                 }
                 if (controls.objects[i].position.y > this.toplim[i]) {
@@ -188,9 +188,9 @@ var physics = {
                     //if(i==0){synth.playSound((controls.objects[i].position.x+20)*10)};
                    // synth.playSound(13);
                     if(i==0){
-                    	//synth.stopOsc(0);
-                    	//synth.startOsc(0, 1);
-                	}
+                        //synth.stopOsc(0);
+                        //synth.startOsc(0, 1);
+                    }
                 }
                 if (controls.objects[i].position.y < this.botlim[i]) {
                     controls.objects[i].position.y = this.botlim[i];
@@ -201,11 +201,11 @@ var physics = {
                      //synth.stopOsc(0);
 
                     //synth.startOsc(0, 4+Math.random()*15);
-                	//}
-                	if(i==0){
-                    	//synth.stopOsc(0);
-                    	//synth.startOsc(0, 2);
-                	}
+                    //}
+                    if(i==0){
+                        //synth.stopOsc(0);
+                        //synth.startOsc(0, 2);
+                    }
                 }
 
                 if ((Math.abs(this.xv[i]) + Math.abs(this.yv[i])) < this.stopv) {
