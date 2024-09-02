@@ -815,10 +815,11 @@ const rr = {
     }
   },
   resize: function(){
-    this.pixscale = window.devicePixelRatio;
-    if(window.innerWidth*window.innerHeight > 2000000) {this.pixscale = 2*window.devicePixelRatio}
-      if(window.innerWidth*window.innerHeight > 4000000) {this.pixscale = 3*window.devicePixelRatio}
-        if(window.innerWidth*window.innerHeight > 8000000) {this.pixscale = 4*window.devicePixelRatio}
+    let getdpr = Math.floor(window.devicePixelRatio);
+    this.pixscale = getdpr;
+    if(window.innerWidth*window.innerHeight > 2000000) {this.pixscale = 2*getdpr}
+      if(window.innerWidth*window.innerHeight > 4000000) {this.pixscale = 3*getdpr}
+        if(window.innerWidth*window.innerHeight > 8000000) {this.pixscale = 4*getdpr}
     canvas.width  = window.innerWidth/this.pixscale;
     canvas.height = window.innerHeight/this.pixscale; 
     rr.ar = canvas.width/canvas.height;
