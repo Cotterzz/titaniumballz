@@ -27,29 +27,16 @@ const input = {
       if (!gamepad) continue;
       for (const [i, button] of gamepad.buttons.entries()) {
         if (button.pressed) {
-          if(i==0){
-            physics.slow();
-          } else if (physics.slowing){
-            physics.fast();
-          }
-        }
-        if (!button.pressed) {
-            if(i==0 && physics.slowing){
-            physics.fast();
-          }
+          //console.log(`Button ${i} [PRESSED]`);
         }
       }
       for (const [i, axis] of gamepad.axes.entries()) {
         //console.log(`${i}: ${axis.toFixed(4)}`);
         //console.log("value", axis + 1);
-        var tlsy = 0;
-        var tlsx = 0;
-        if(i==0){tlsx=axis}
-        if(i==1){tlsy=axis}
-        if(Math.abs(tlsx)<0.05){tlsx=0}
-        if(Math.abs(tlsy)<0.05){tlsy=0}
-        if(Math.abs(tlsx)>0.1){input.lsx=tlsx}
-        if(Math.abs(tlsy)>0.1){input.lsy=tlsy}
+        if(i==0){input.lsx=axis}
+        if(i==1){input.lsy=axis}
+        if(Math.abs(input.lsx)<0.1){input.lsx=0}
+        if(Math.abs(input.lsy)<0.1){input.lsy=0}
       }
     }
   },
@@ -117,14 +104,12 @@ const shaders = {
     uniform vec3 pos8;
     uniform vec3 pos9;
     uniform vec3 pos10;
-    uniform int activerobs;
     uniform int player;
     uniform int hasball;
-
     out vec4 outColor;
 
-    #define numrobs 11
-    #define numlights 4
+#define numrobs 11
+#define numlights 4
 
 #define white vec3(1.)
 #define pink vec3(.95,.75,.75)
@@ -351,6 +336,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     float theight = 0.0;
     float angle = 0.0;
     
+    int activerobs = 11;
 
         vec3 pos[numrobs];
         pos[0] = vec3(pos0, 0.0);
@@ -395,6 +381,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         } 
     }
     
+    int player = 1;
     
     int tracter = hasball;
     int tractee = 0;
@@ -771,7 +758,6 @@ const rr = {
   pos10Loc:null,
   playerLoc:null,
   hasballLoc:null,
-  activeLoc:null,
   transformY: function(y){
     return (0.5 + (y/6.0)*0.5);
   },
@@ -795,20 +781,20 @@ const rr = {
     rr.gl.uniform2f(rr.resolutionLoc, rr.gl.canvas.width, rr.gl.canvas.height);
     rr.gl.uniform2f(rr.mouseLoc, input.mx, input.my);
     rr.gl.uniform1f(rr.timeLoc, rr.time);
-    rr.gl.uniform2f(rr.pos0Loc,  rr.transformX(g.o[0].x), rr.transformY(g.o[0].y));
-    rr.gl.uniform3f(rr.pos1Loc,  rr.transformX(g.o[1].x), rr.transformY(g.o[1].y), g.o[1].r);
-    rr.gl.uniform3f(rr.pos2Loc,  rr.transformX(g.o[2].x), rr.transformY(g.o[2].y), g.o[2].r);
-    rr.gl.uniform3f(rr.pos3Loc,  rr.transformX(g.o[3].x), rr.transformY(g.o[3].y), g.o[3].r);
-    rr.gl.uniform3f(rr.pos4Loc,  rr.transformX(g.o[4].x), rr.transformY(g.o[4].y), g.o[4].r);
-    rr.gl.uniform3f(rr.pos5Loc,  rr.transformX(g.o[5].x), rr.transformY(g.o[5].y), g.o[5].r);
-    rr.gl.uniform3f(rr.pos6Loc,  rr.transformX(g.o[6].x), rr.transformY(g.o[6].y), g.o[6].r);
-    rr.gl.uniform3f(rr.pos7Loc,  rr.transformX(g.o[7].x), rr.transformY(g.o[7].y), g.o[7].r);
-    rr.gl.uniform3f(rr.pos8Loc,  rr.transformX(g.o[8].x), rr.transformY(g.o[8].y), g.o[8].r);
-    rr.gl.uniform3f(rr.pos9Loc,  rr.transformX(g.o[9].x), rr.transformY(g.o[9].y), g.o[9].r);
-    rr.gl.uniform3f(rr.pos10Loc,rr.transformX(g.o[10].x), rr.transformY(g.o[10].y), g.o[10].r);
-    rr.gl.uniform1i(rr.activeLoc, physics.amount);
+    rr.gl.uniform2f(rr.pos0Loc,  rr.transformX(go[0].x), rr.transformY(go[0].y));
+    rr.gl.uniform3f(rr.pos1Loc,  rr.transformX(go[1].x), rr.transformY(go[1].y), go[1].r);
+    rr.gl.uniform3f(rr.pos2Loc,  rr.transformX(go[2].x), rr.transformY(go[2].y), go[2].r);
+    rr.gl.uniform3f(rr.pos3Loc,  rr.transformX(go[3].x), rr.transformY(go[3].y), go[3].r);
+    rr.gl.uniform3f(rr.pos4Loc,  rr.transformX(go[4].x), rr.transformY(go[4].y), go[4].r);
+    rr.gl.uniform3f(rr.pos5Loc,  rr.transformX(go[5].x), rr.transformY(go[5].y), go[5].r);
+    rr.gl.uniform3f(rr.pos6Loc,  rr.transformX(go[6].x), rr.transformY(go[6].y), go[6].r);
+    rr.gl.uniform3f(rr.pos7Loc,  rr.transformX(go[7].x), rr.transformY(go[7].y), go[7].r);
+    rr.gl.uniform3f(rr.pos8Loc,  rr.transformX(go[8].x), rr.transformY(go[8].y), go[8].r);
+    rr.gl.uniform3f(rr.pos9Loc,  rr.transformX(go[9].x), rr.transformY(go[9].y), go[9].r);
+    rr.gl.uniform3f(rr.pos10Loc,rr.transformX(go[10].x), rr.transformY(go[10].y), go[10].r);
+
     rr.gl.uniform1i(rr.hasballLoc, physics.possby);
-    rr.gl.uniform1i(rr.playerLoc, AI.human);
+
     rr.gl.drawArrays(
         rr.gl.TRIANGLES,
         0,     // offset
@@ -863,9 +849,8 @@ const rr = {
     rr.pos8Loc = rr.gl.getUniformLocation(rr.program, "pos8");
     rr.pos9Loc = rr.gl.getUniformLocation(rr.program, "pos9");
     rr.pos10Loc =rr.gl.getUniformLocation(rr.program, "pos10");
+
     rr.hasballLoc =rr.gl.getUniformLocation(rr.program, "hasball");
-    rr.activeLoc =rr.gl.getUniformLocation(rr.program, "activerobs");
-    rr.playerLoc =rr.gl.getUniformLocation(rr.program, "player");
 
   rr.vao = rr.gl.createVertexArray();
   rr.gl.bindVertexArray(rr.vao);
@@ -890,12 +875,12 @@ const rr = {
 }
 
 const physics = {
-    hook: 0.9,
+    hook: [0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85],
     amount: 11,
     damp: 0.98,
-    stopv: 0,
+    stopv: 0.001,
     cdist: 3,
-    maxvel:[0.13, 0.13, 0.13,0.13,0.13, 0.13, 0.13,0.13, 0.13, 0.13, 0.13],
+    maxvel:[0.13, 0.2, 0.13,0.13,0.13, 0.13, 0.13,0.13, 0.13, 0.13, 0.13],
     agil: 2,
     poss: false,
     possby: 0,
@@ -929,25 +914,17 @@ const physics = {
     nearestA: 0,
     nearestB: 0,
     vinc: 0.1,
-    delta: 0.7,
+    delta: 1.0,
     slowing: false,
-    power: 0.1,
     slow: function(){
-      if(physics.possby==AI.human && !physics.slowing){
-        physics.slowing = true;
-      }
+      physics.slowing = true;
     },
     fast: function(){
-      physics.delta = 0.7;
-      physics.hook = 1.0;
-      physics.slowing = false;
-      if(physics.possby==AI.human){
-        physics.shoot(AI.human);
-      }
+      physics.delta = 1.0;physics.slowing = false;
     },
     checkColl: function(A, B) {
-        var dx = g.o[B].x - g.o[A].x;
-        var dy = g.o[B].y - g.o[A].y;
+        var dx = go[B].x - go[A].x;
+        var dy = go[B].y - go[A].y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < this.radii[A] + this.radii[B]) {
             var angle = Math.atan2(dy, dx);
@@ -968,25 +945,15 @@ const physics = {
             var diff = ((this.radii[A] + this.radii[B]) - dist) / 2;
             var cosd = cosa * diff;
             var sind = sina * diff;
-            g.o[A].x -= cosd;
-            g.o[A].y -= sind;
-            g.o[B].x += cosd;
-            g.o[B].y += sind;
+            go[A].x -= cosd;
+            go[A].y -= sind;
+            go[B].x += cosd;
+            go[B].y += sind;
         }
     },
-    shoot: function(i){
-      console.log(physics.power);
-                    this.poss = false;
-                    this.possby = 0;
-                    this.yv[0] = this.yv[i] + (physics.power) * Math.sin(g.o[i].r - 1.5708);
-                    this.xv[0] = this.xv[i] + (physics.power) * Math.cos(g.o[i].r - 1.5708);
-                    g.o[0].x += this.xv[0];
-                    g.o[0].y += this.yv[0];
-                    physics.power=0.1;
-    },
     score: function(side) {
-        g.o[0].x = 0;
-        g.o[0].y = 0;
+        go[0].x = 0;
+        go[0].y = 0;
 
         this.xv[0] = 0;
         this.yv[0] = 0;
@@ -996,61 +963,59 @@ const physics = {
     animate: function() {
 
         if(physics.slowing){
-          if(physics.delta>0.1){physics.delta*=0.98;}
-          if(physics.hook>0.9){physics.hook*=0.98;}
-          if(physics.power<1){physics.power*=1.02;}
+          if(physics.delta>0.2){physics.delta*=0.95;}
         }
 
         for (var i = 0; i < this.amount; i++) {
 
 
                 if (this.poss && i === 0) {
-                    g.o[i].x = (g.o[this.possby].x + 1.3*(this.hook * Math.cos(g.o[this.possby].r - 1.5708)));
-                    g.o[i].y = (g.o[this.possby].y + 1.3*(this.hook * Math.sin(g.o[this.possby].r - 1.5708)));
+                    go[i].x = (go[this.possby].x + 1.1*(this.hook[i] * Math.cos(go[this.possby].r - 1.5708)));
+                    go[i].y = (go[this.possby].y + 1.1*(this.hook[i] * Math.sin(go[this.possby].r - 1.5708)));
                 }
                 //if(i<2){
-                g.o[i].x += this.xv[i]*this.delta;
-                g.o[i].y += this.yv[i]*this.delta;
+                go[i].x += this.xv[i]*this.delta;
+                go[i].y += this.yv[i]*this.delta;
                 //}
                 this.xv[i] *= this.damp;
                 this.yv[i] *= this.damp;
 
                 if (i === 0) {
-                  if (!(g.o[i].y < this.goalTop && g.o[i].y > this.goalBottom)) {
-                           if (g.o[i].x > this.riglim[i]){
-                              g.o[i].x = this.riglim[i];
+                  if (!(go[i].y < this.goalTop && go[i].y > this.goalBottom)) {
+                           if (go[i].x > this.riglim[i]){
+                              go[i].x = this.riglim[i];
                               this.xv[i] = -this.xv[i];
                            }
-                           if (g.o[i].x < this.leflim[i]){
-                              g.o[i].x = this.leflim[i];
+                           if (go[i].x < this.leflim[i]){
+                              go[i].x = this.leflim[i];
                               this.xv[i] = -this.xv[i];
                            }
                   }
-                  if (g.o[i].x > this.riglim[i]+1) {
+                  if (go[i].x > this.riglim[i]+1) {
                       this.score("A");
                   } 
-                  if (g.o[i].x < this.leflim[i]-1) {
+                  if (go[i].x < this.leflim[i]-1) {
                       this.score("B");
                   } 
                 } else {
-                if (g.o[i].x > this.riglim[i]) {
+                if (go[i].x > this.riglim[i]) {
 
-                    g.o[i].x = this.riglim[i];
+                    go[i].x = this.riglim[i];
                     this.xv[i] = -this.xv[i];
 
                 }
-                if (g.o[i].x < this.leflim[i]) {
-                    g.o[i].x = this.leflim[i];
+                if (go[i].x < this.leflim[i]) {
+                    go[i].x = this.leflim[i];
                     this.xv[i] = -this.xv[i];
                 }
               }
-                if (g.o[i].y > this.toplim[i]) {
-                    g.o[i].y = this.toplim[i];
+                if (go[i].y > this.toplim[i]) {
+                    go[i].y = this.toplim[i];
                     this.yv[i] = -this.yv[i];
        
                 }
-                if (g.o[i].y < this.botlim[i]) {
-                    g.o[i].y = this.botlim[i];
+                if (go[i].y < this.botlim[i]) {
+                    go[i].y = this.botlim[i];
                     this.yv[i] = -this.yv[i];
        
                 }
@@ -1060,17 +1025,17 @@ const physics = {
                     this.yv[i] = 0;
                 }
    
-            this.xp[i] = g.o[i].x;
-            this.yp[i] = g.o[i].y;
+            this.xp[i] = go[i].x;
+            this.yp[i] = go[i].y;
             for (var j = i + 1; j < this.amount; j++) {
                 this.checkColl(i, j);
             }
             if (i==0){
 
                 if (this.poss) {
-                    var xd2 = g.o[0].x - (g.o[this.possby].x + (this.hook * Math.cos(g.o[this.possby].r - 1.5708)));
-                    var yd2 = g.o[0].y - (g.o[this.possby].y + (this.hook * Math.sin(g.o[this.possby].r - 1.5708)));
-                    if (Math.sqrt((Math.abs(xd2) * Math.abs(xd2) + (Math.abs(yd2) * Math.abs(yd2)))) > 0.4) {
+                    var xd2 = go[0].x - (go[this.possby].x + (this.hook[i] * Math.cos(go[this.possby].r - 1.5708)));
+                    var yd2 = go[0].y - (go[this.possby].y + (this.hook[i] * Math.sin(go[this.possby].r - 1.5708)));
+                    if (Math.sqrt((Math.abs(xd2) * Math.abs(xd2) + (Math.abs(yd2) * Math.abs(yd2)))) > 0.3) {
                         this.yv[0] = this.yv[this.possby];
                         this.xv[0] = this.xv[this.possby];
                         this.poss = false;
@@ -1080,15 +1045,15 @@ const physics = {
                 }
 
             } else {
-                this.ballxd[i] = g.o[0].x - g.o[i].x;
-                this.ballyd[i] = g.o[0].y - g.o[i].y;
+                this.ballxd[i] = go[0].x - go[i].x;
+                this.ballyd[i] = go[0].y - go[i].y;
                 this.balld[i] = Math.sqrt((Math.abs(this.ballxd[i]) * Math.abs(this.ballxd[i])) + (Math.abs(this.ballyd[i]) * Math.abs(this.ballyd[i])));
 
-                this.targetxd[i] = this.targetx[i] - g.o[i].x;
-               this.targetyd[i] = this.targety[i] - g.o[i].y;
+                this.targetxd[i] = this.targetx[i] - go[i].x;
+                this.targetyd[i] = this.targety[i] - go[i].y;
                 this.targeta[i] = Math.atan2(this.targetyd[i], this.targetxd[i]);
    
-                g.o[i].r = g.o[i].r % 6.283184;
+                go[i].r = go[i].r % 6.283184;
  
                 this.targetd[i] = Math.sqrt((Math.abs(this.targetxd[i]) * Math.abs(this.targetxd[i])) + (Math.abs(this.targetyd[i]) * Math.abs(this.targetyd[i])));
 
@@ -1098,7 +1063,7 @@ const physics = {
                     this.v[i] = this.maxvel[i];
                 } else if (i == this.nearestB && this.possby != i) {
                     this.v[i] = this.maxvel[i];
-                } else if (this.possby == i && i!=AI.human) {
+                } else if (this.possby == i && i!=1) {
                     this.v[i] = this.maxvel[i];
                 } else {
                     this.v[i] = this.maxvel[i] * (this.targetd[i] / this.cdist);
@@ -1107,7 +1072,7 @@ const physics = {
                 //
                 var wx = this.v[i] * Math.cos(this.targeta[i]);
                 var wy = this.v[i] * Math.sin(this.targeta[i]);
-                var netrotation = (g.o[i].r - 1.5708);
+                var netrotation = (go[i].r - 1.5708);
 
                 this.anglediff[i] = this.targeta[i] - netrotation;
 
@@ -1119,17 +1084,17 @@ const physics = {
                 }
 
 
-                if (Math.abs(this.anglediff[i]) < 1.9) {
+                if (Math.abs(this.anglediff[i]) < 0.5) {
                     this.yv[i] += (wy - this.yv[i]) / this.agil;
                     this.xv[i] += (wx - this.xv[i]) / this.agil;
                 }
 
                 this.angleinc[i] = (this.anglediff[i]) / 10;
 
-                if (this.targetd[i] < 1 && i!=AI.human) {
+                if (this.targetd[i] < 1 && i>1) {
 
-                    this.targetxd[i] = g.o[0].x - g.o[i].x;
-                    this.targetyd[i] = g.o[0].y - g.o[i].y;
+                    this.targetxd[i] = go[0].x - go[i].x;
+                    this.targetyd[i] = go[0].y - go[i].y;
                     this.targeta[i] = Math.atan2(this.targetyd[i], this.targetxd[i]);
                     this.anglediff[i] = this.targeta[i] - netrotation;
                     if (this.anglediff[i] > 3.1415927) {
@@ -1140,23 +1105,28 @@ const physics = {
                     }
                     this.angleinc[i] = (this.anglediff[i]) / 10;
 
-                
+
 
                 }
 
-                g.o[i].r += this.angleinc[i]*this.delta;
+                go[i].r += this.angleinc[i]*this.delta;
  
-                if (this.possby == i && this.targetd[i] < 1 && i!=AI.human) {
-                    this.shoot(i);
+                if (this.possby == i && this.targetd[i] < 1 && i>1) {
+                    this.poss = false;
+                    this.possby = 0;
+                    this.yv[0] = this.yv[i] + 0.4 * Math.sin(go[i].r - 1.5708);
+                    this.xv[0] = this.xv[i] + 0.4 * Math.cos(go[i].r - 1.5708);
+                    go[0].x += this.xv[0];
+                    go[0].y += this.yv[0];
                 }
 
                 if (!this.poss) {
-                    var xd = g.o[0].x - (g.o[i].x + (this.hook * Math.cos(g.o[i].r - 1.5708)));
-                    var yd = g.o[0].y - (g.o[i].y + (this.hook * Math.sin(g.o[i].r - 1.5708)));
-                    if (Math.sqrt((Math.abs(xd) * Math.abs(xd) + (Math.abs(yd) * Math.abs(yd)))) < 0.3) {
+                    var xd = go[0].x - (go[i].x + (this.hook[i] * Math.cos(go[i].r - 1.5708)));
+                    var yd = go[0].y - (go[i].y + (this.hook[i] * Math.sin(go[i].r - 1.5708)));
+                    if (Math.sqrt((Math.abs(xd) * Math.abs(xd) + (Math.abs(yd) * Math.abs(yd)))) < 0.2) {
                         this.poss = true;
                         this.possby = i;
-                        if(i<6 ) {AI.human=i};
+                      
                     }
                 }
 
@@ -1165,9 +1135,9 @@ const physics = {
             }
          
         }
-        this.nearestA = 1;
+        this.nearestA = 2;
         this.nearestB = 6;
-        for (var k = 1; k < 6; k++) {
+        for (var k = 2; k < 6; k++) {
             if (this.balld[k] < this.balld[this.nearestA]) {
                 this.nearestA = k;
             }
@@ -1178,16 +1148,11 @@ const physics = {
                 this.nearestB = l;
             }
         }
-        //if(physics.possby!=AI.human){
-          //AI.human = this.nearestA;
-        //}
-        
-
     }
 };
 
-const g ={
-  o:[{x:0, y:0},
+var go = [
+  {x:0, y:0},
   {x:-2,y:0, r: 1.5708},
   {x:-4,y:2, r: 1.5708},
   {x:-4,y:-2,r: 1.5708},
@@ -1198,11 +1163,9 @@ const g ={
   {x:4, y:-2,r:-1.5708},
   {x:6, y:2, r:-1.5708},
   {x:6, y:-2,r:-1.5708}]
-};
 
 var AI = {
     human: 1,
-    attacking: false,
     attackx: [0, 0.2, 0.4, 0.6, 0.8, 1.2, 1.5, 1.5, 1.8, 1.8, 1.9],
     attacky: [0, 1, 1.5, 0.5, 1.7, 0.3, 1.3, 0.7, 0.3, 1.7, 1],
     neutralx: [0, 0.25, 0.25, 0.7, 0.7, 0.8, 1.2, 1.3, 1.3, 1.75, 1.75],
@@ -1215,24 +1178,17 @@ var AI = {
     animate: function() {
         if (physics.poss) {
             if (physics.possby > 5) {
-              this.attacking = false;
-            } else {
-              this.attacking = true;
-
-            }
-
-        }
-
-        if (this.attacking == false) {
-              
                 this.positionx = this.defensex;
                 this.positiony = this.defensey;
             } else {
-              
                 this.positionx = this.attackx;
                 this.positiony = this.attacky;
             }
 
+        } else {
+            this.positionx = this.neutralx;
+            this.positiony = this.neutraly;
+        }
 
         for (var i = 1; i < 11; i++) {
             if(i!=this.human){
@@ -1243,8 +1199,8 @@ var AI = {
         if(input.gp){
           var gpoffset = 0;
           if(physics.possby==1){gpoffset=0}
-            physics.targetx[this.human] = (g.o[this.human].x-gpoffset) + input.lsx*2;
-            physics.targety[this.human] = (g.o[this.human].y+gpoffset) - input.lsy*2;
+            physics.targetx[this.human] = (go[this.human].x-gpoffset) + input.lsx*2;
+            physics.targety[this.human] = (go[this.human].y+gpoffset) - input.lsy*2;
           } else {
             physics.targetx[this.human] = ((input.mx/window.innerWidth)*20)-10;
             physics.targety[this.human] = ((input.my/window.innerHeight)*12)-6;
@@ -1253,11 +1209,11 @@ var AI = {
 
         // nearest red and green droids to ball targets ball
         if(physics.nearestA!=this.human){
-        physics.targetx[physics.nearestA] = g.o[0].x;
-        physics.targety[physics.nearestA] = g.o[0].y;
+        physics.targetx[physics.nearestA] = go[0].x;
+        physics.targety[physics.nearestA] = go[0].y;
         }
-        physics.targetx[physics.nearestB] = g.o[0].x;
-        physics.targety[physics.nearestB] = g.o[0].y;
+        physics.targetx[physics.nearestB] = go[0].x;
+        physics.targety[physics.nearestB] = go[0].y;
 
         // if ball is in possession, give possessing droid new target
         if (physics.poss&&physics.possby!=this.human) {
@@ -1281,7 +1237,7 @@ var AI = {
     },
 
     getx: function(num) {
-        var ballx = g.o[0].x;
+        var ballx = go[0].x;
         ballx += 9.6;
         if (num < 1) {
             return ((ballx * num) - 9.6);
@@ -1291,7 +1247,7 @@ var AI = {
     },
 
     gety: function(num) {
-        var bally = g.o[0].y;
+        var bally = go[0].y;
         bally += 5.4;
         if (num < 1) {
             return ((bally * num) - 5.4);
